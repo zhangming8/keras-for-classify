@@ -1,5 +1,6 @@
 from __future__ import print_function
 import matplotlib
+
 matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 import numpy as np
@@ -15,17 +16,17 @@ import keras.backend as K
 from imutils import paths
 from mynet import AlexNet, LeNet, LeNet2
 
-label_dict = {'33020002':'0', '33020011':'1', '33020024':'2', '33030005':'3', '33050014':'4', '33050019':'5',
-              '33050031':'6', '33050032':'7', '33050035':'8', '33050036':'9', '33060009':'10', '33070002':'11'}
+label_dict = {'33020002': '0', '33020011': '1', '33020024': '2', '33030005': '3', '33050014': '4', '33050019': '5',
+              '33050031': '6', '33050032': '7', '33050035': '8', '33050036': '9', '33060009': '10', '33070002': '11'}
 
 # parameters setting
-os.environ["CUDA_VISIBLE_DEVICES"] = "3" # use gpu number
+os.environ["CUDA_VISIBLE_DEVICES"] = "3"  # use gpu number
 file_path = '/Users/ming/Downloads/dataset/use_sku'  # data file path
 train_ratio = 0.7  # train ratio
 EPOCHS = 10  # epoch
 INIT_LR = 1e-3  # initial learning rate
 lr_decay_interval = 30
-lr_decay_ratio = 0.1 # lr * lr_decay_ratio every lr_decay_interval epoch
+lr_decay_ratio = 0.1  # lr * lr_decay_ratio every lr_decay_interval epoch
 Batch_Size = 16  # batch size
 CLASS_NUM = 12
 norm_size = 32  # resize images to norm_size * norm_size
@@ -60,10 +61,10 @@ def scheduler(epoch):
     if epoch % lr_decay_interval == 0:
         lr = K.get_value(model.optimizer.lr)
         if epoch == 0:
-            print('lr: ',lr)
+            print('lr: ', lr)
         else:
-            K.set_value(model.optimizer.lr, lr*lr_decay_ratio)
-            print('lr: ',lr*lr_decay_ratio)
+            K.set_value(model.optimizer.lr, lr * lr_decay_ratio)
+            print('lr: ', lr * lr_decay_ratio)
     return K.get_value(model.optimizer.lr)
 
 
@@ -74,7 +75,7 @@ if __name__ == '__main__':
     # shuffle the order of images
     random.seed(20)
     random.shuffle(imagePaths)
-    train_num = int(train_ratio*len(imagePaths))
+    train_num = int(train_ratio * len(imagePaths))
     # split the train and test images
     train_file_path = imagePaths[:train_num]
     print('train num is', len(train_file_path))
@@ -103,7 +104,7 @@ if __name__ == '__main__':
     H = model.fit_generator(aug.flow(trainX, trainY, batch_size=Batch_Size),
                             validation_data=(testX, testY), steps_per_epoch=len(trainX) // Batch_Size,
                             epochs=EPOCHS, verbose=1, callbacks=[lr_decay])
-    
+
     # save the model
     print("save model...")
     model.save(save_model)
